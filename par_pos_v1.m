@@ -152,9 +152,9 @@ for m = 1:size(data,1)
             tmp{s,c}.vwcm.r = sqrt(tmp{s,c}.vwcm.disp100(:,1).^2+tmp{s,c}.vwcm.disp100(:,2).^2);
             % no radius calculation for 500 frame window so far
 
-            tmp{s,c}.gF.rms10 = RMSfilt2d(tmp{s,c}.gF.disp100,10);
+            tmp{s,c}.gF.rms10 = RMSfilt2d(tmp{s,c}.gF.pos,10);
             % no rms calculation for 500 frame window so far
-            tmp{s,c}.vwcm.rms10 = RMSfilt2d(tmp{s,c}.vwcm.disp100,10);
+            tmp{s,c}.vwcm.rms10 = RMSfilt2d(tmp{s,c}.vwcm.pos,10);
             % no rms calculation for 500 frame window so far       
             
             % mapping
