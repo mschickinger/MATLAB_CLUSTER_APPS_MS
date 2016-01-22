@@ -1,4 +1,4 @@
-function [ data, vwcm_output ] = par_vwcm_v2(data_path)
+function [ data, vwcm_output ] = par_vwcm(data_path)
 % Parallel particle tracking function for two-channel movie objects
 % VWCM position estimation + first processing steps (mapping,
 % averaging, rms filtering...)
@@ -75,32 +75,30 @@ for m = 1:size(data,1)
     parfor s = 1:size(data{m},1)
         for ch = 1:2
             % get data from vwcm estimate
-            tmp{s,ch}.vwcm.pos = tmp_vwcm_output{s,ch}(:,1:2);
-            tmp{s,ch}.vwcm.delta = tmp_vwcm_output{s,ch}(:,3);
-            tmp{s,ch}.vwcm.N = tmp_vwcm_output{s,ch}(:,4);
-            tmp{s,ch}.vwcm.pos_max = tmp_vwcm_output{s,ch}(:,5:6);
-            tmp{s,ch}.vwcm.v_max = tmp_vwcm_output{s,ch}(:,7);
-            tmp{s,ch}.vwcm.stDev = tmp_vwcm_output{s,ch}(:,8);
+            tmp{s,ch}.pos = tmp_vwcm_output{s,ch}(:,1:2);
+            tmp{s,ch}.delta = tmp_vwcm_output{s,ch}(:,3);
+            tmp{s,ch}.N = tmp_vwcm_output{s,ch}(:,4);
+            tmp{s,ch}.pos_max = tmp_vwcm_output{s,ch}(:,5:6);
+            tmp{s,ch}.v_max = tmp_vwcm_output{s,ch}(:,7);
+            tmp{s,ch}.stDev = tmp_vwcm_output{s,ch}(:,8);
             
             % complete datasets
-            tmp{s,ch}.vwcm.means100 = running_avg_2d_nnz(tmp{s,ch}.vwcm.pos,100);
-            tmp{s,ch}.vwcm.med100 = running_avg_2d_nnz(tmp{s,ch}.vwcm.pos,500);
+            tmp{s,ch}.means100 = running_avg_2d_nnz(tmp{s,ch}.pos,100);
+            tmp{s,ch}.medians101 = medfilt1_trunc(tmp{s,ch}.pos,101);
 
-            tmp{s,ch}.vwcm.disp100 = tmp{s,ch}.vwcm.pos - tmp{s,ch}.vwcm.means100;
-            tmp{s,ch}.vwcm.disp500 = tmp{s,ch}.vwcm.pos - tmp{s,ch}.vwcm.means500;
+            tmp{s,ch}.disp100 = tmp{s,ch}.pos - tmp{s,ch}.means100;
+            tmp{s,ch}.dispmed101 = tmp{s,ch}.pos - tmp{s,ch}.medians101;
             
-            tmp{s,ch}.vwcm.r = sqrt(tmp{s,ch}.vwcm.disp100(:,1).^2+tmp{s,ch}.vwcm.disp100(:,2).^2);
-            % no radius calculation for 500 frame window so far
+            tmp{s,ch}.r = sqrt(tmp{s,ch}.disp100(:,1).^2+tmp{s,ch}.disp100(:,2).^2);
             
-            tmp{s,ch}.vwcm.rms10 = RMSfilt2d(tmp{s,ch}.vwcm.disp100,10);
-            % no rms calculation for 500 frame window so far       
+            tmp{s,ch}.rms10 = RMSfilt2d(tmp{s,ch}.pos,10); 
             
             % mapping
             if mapping
-                tmp{s,ch}.vwcm.pos_map = zeros(size(tmp{s,ch}.vwcm.pos));  
-                for i = 1:size(tmp{s,ch}.vwcm.pos_map,1)
-                    if sum(tmp{s,ch}.vwcm.pos(i,:)) > 0
-                        tmp{s,ch}.vwcm.pos_map(i,:) = transformPointsInverse(tform{ch}, tmp{s,ch}.vwcm.pos(i,:));  %%this takes coords in ch2 and transforms them to coords in ch1
+                tmp{s,ch}.pos_map = zeros(size(tmp{s,ch}.pos));  
+                for i = 1:size(tmp{s,ch}.pos_map,1)
+                    if sum(tmp{s,ch}.pos(i,:)) > 0
+                        tmp{s,ch}.pos_map(i,:) = transformPointsInverse(tform{ch}, tmp{s,ch}.pos(i,:));  %%this takes coords in ch2 and transforms them to coords in ch1
                     end
                 end
             end
