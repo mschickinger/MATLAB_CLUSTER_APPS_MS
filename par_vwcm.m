@@ -55,7 +55,7 @@ for m=1:size(movies,1)
         tmp = [tmp{:}];
         for s = 1:size(tmp,1)
             for i = 1:8
-                vwcm_output{m}{s,ch}(:,i) = tmp(s,i:8:end)';
+                vwcm_output{m}{s,ch}(:,i) = tmp(s,i:8:end);
             end
         end
         FID = fopen('par_vwcm_log.txt', 'a');
