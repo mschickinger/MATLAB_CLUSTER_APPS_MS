@@ -23,7 +23,7 @@ end
 pname=uigetdir(data_dir,'Choose the folder with all .fits files.');
 files = cell(size(channel,1),1);
 for ch = 1:size(channel,1)
-files{ch} = pickFirstFitsFiles(pname, channel{ch}); 
+    files{ch} = pickFirstFitsFiles(pname, channel{ch}); 
 end
 
 N_movie = length(files{1});
@@ -48,14 +48,14 @@ last = round(str2double(tmp(2))); % last image to read from file
 %determine sequences
 sequences = cell(N_movie,size(channel,1));
 for m = 1:N_movie
-for ch = 1:size(sequences,2)
-sequences{m,ch} = zeros(1, size(tmp{2+ch},2));
-for i=1:size(tmp{2+ch},2)
-    if(tmp{2+ch}(i) == '1')
-        sequences{m,ch}(1,i) = 1;
+    for ch = 1:size(sequences,2)
+    sequences{m,ch} = zeros(1, size(tmp{2+ch},2));
+        for i=1:size(tmp{2+ch},2)
+            if(tmp{2+ch}(i) == '1')
+                sequences{m,ch}(1,i) = 1;
+            end
+        end
     end
-end
-end
 end
 
 N_skip = str2double(tmp(3+size(sequences,2))); % frame number compression factor
