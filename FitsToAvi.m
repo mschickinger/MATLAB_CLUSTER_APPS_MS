@@ -71,6 +71,11 @@ for m=1:N_movie
 end
 
 display('Data ready to go')
+
+path_out = [pname filesep 'avi'];
+mkdir(path_out);
+cd(path_out)
+
 %{
  % Old code -- here the parameters are loaded from already existing movie
  % objects.
@@ -82,9 +87,7 @@ display('data loaded and ready')
 cd(DataPathName)
 cd ..
 %}
-cd(pname)
-path_out = uigetdir(cd, 'Select the directory the AVI movies will be written to');
-cd(path_out)
+
 %%
 for m = 1:N_movie
     for ch = 1:size(sequences,2)
