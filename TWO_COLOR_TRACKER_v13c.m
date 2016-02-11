@@ -215,10 +215,13 @@ close(h)
 
 criteria = ones(N_peaks_raw,2);
 
-if chb == 1
-    criteria(:,1:2) = filter_spots(ch1_fit_raw(:,3:4), [0.9 10/9], 2);
-elseif chb == 2
-    criteria(:,1:2) = filter_spots(ch2_fit_raw(:,3:4), [0.9 10/9], 2);
+std_borders = [0.8 1.25];
+
+switch chb
+    case 1
+        criteria(:,1:2) = filter_spots(ch1_fit_raw(:,3:4), std_borders, 2);
+    case 2
+        criteria(:,1:2) = filter_spots(ch2_fit_raw(:,3:4), std_borders, 2);
 end
 
 accepted = (criteria(:,1) & criteria(:,2));
