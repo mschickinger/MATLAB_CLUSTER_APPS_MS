@@ -195,14 +195,14 @@ for i=1:N_peaks_raw
     % channel 1
     x1 = round(peaks_raw(i,1));
     y1 = round(peaks_raw(i,2));
-    [c, c_err, ci, area] = fit_gauss2d_mainaxis_bg(x1, y1, s_x, w_fit, avg_img{peaks_raw(i, 5),1});
+    [c, c_err, ~, ~] = fit_gauss2d_mainaxis_bg(x1, y1, s_x, w_fit, avg_img{peaks_raw(i, 5),1});
     ch1_fit_raw(i,:) = c;
     ch1_fit_err_raw(i,:) = c_err;
 
     % channel 2
     x2 = round(peaks_raw(i,3));
     y2 = round(peaks_raw(i,4));
-    [c, c_err, ci, area] = fit_gauss2d_mainaxis_bg(x2, y2, s_x, w_fit, avg_img{peaks_raw(i, 5),2});
+    [c, c_err, ~, ~] = fit_gauss2d_mainaxis_bg(x2, y2, s_x, w_fit, avg_img{peaks_raw(i, 5),2});
     ch2_fit_raw(i,:) = c;
     ch2_fit_err_raw(i,:) = c_err;
     
