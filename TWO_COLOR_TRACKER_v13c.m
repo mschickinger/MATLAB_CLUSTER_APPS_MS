@@ -408,31 +408,29 @@ end
 %% fill allocated containers with itraces and get fit_cutoff, if cluster pre-processing is enabled
 
 display('Getting intensity traces... please wait')
-for i = 1:N_movie
-    if ParPrePro
-        mycluster = parcluster('SharedCluster');
-        intstat = 0; % keep track of cluster job
-        itrace_job = custom_batch('matthiasschickinger', mycluster, @par_merged_itraces, 1 ...
-        , {[ch1 ch2], peaks, r_integrate, path_out},'CaptureDiary',true, 'CurrentDirectory', '.' ...
-        , 'Pool', 63,'AdditionalPaths', {[matlab_dir filesep 'TOOLBOX_GENERAL'], [matlab_dir filesep 'TOOLBOX_MOVIE'],...
-        [matlab_dir filesep 'FM_applications'], [matlab_dir filesep 'DEVELOPMENT']});
+if ParPrePro
+    mycluster = parcluster('SharedCluster');
+    intstat = 0; % keep track of cluster job
+    itrace_job = custom_batch('matthiasschickinger', mycluster, @par_merged_itraces, 1 ...
+    , {[ch1 ch2], peaks, r_integrate, path_out},'CaptureDiary',true, 'CurrentDirectory', '.' ...
+    , 'Pool', 63,'AdditionalPaths', {[matlab_dir filesep 'TOOLBOX_GENERAL'], [matlab_dir filesep 'TOOLBOX_MOVIE'],...
+    [matlab_dir filesep 'FM_applications'], [matlab_dir filesep 'DEVELOPMENT']});
     tic
-        while intstat == 0
-            display(['Waiting for itrace job to finish, T: ' datestr(toc/86400, 'HH:MM:SS')])
-            pause(30)
-            if exist([path_out filesep 'merged_itraces.mat'], 'file')
-                display('loading file: merged_itraces.mat')
-                pause(60)
-                job_result = load([path_out filesep 'merged_itraces.mat']);
-                merged_itraces = job_result.merged_itraces;
-                delete([path_out filesep 'merged_itraces.mat'])
-                intstat = 1;
-            end
+    while intstat == 0
+        display(['Waiting for itrace job to finish, T: ' datestr(toc/86400, 'HH:MM:SS')])
+        pause(30)
+        if exist([path_out filesep 'merged_itraces.mat'], 'file')
+            display('taking a minute to load file: merged_itraces.mat')
+            pause(60)
+            job_result = load([path_out filesep 'merged_itraces.mat']);
+            merged_itraces = job_result.merged_itraces;
+            delete([path_out filesep 'merged_itraces.mat'])
+            intstat = 1;
         end
-        display('Tracing done')
-    toc
-    else
-    tic
+    end
+    display('Tracing done')
+else
+    for i = 1:N_movie
         tmp_itraces = ch1{i}.int_spots_in_frames(1:length(ch1{i}.frames), peaks(peaks(:,5)==i,1:2), r_integrate);
         % add median filtered itraces
         for j=1:length(tmp_itraces)
@@ -441,8 +439,6 @@ for i = 1:N_movie
         % transfer to merged_itraces
         merged_itraces{i,1} = tmp_itraces;
         display(['Tracing ' channel{1} ' channel in movie #' num2str(i) ' done'])       
-    toc
-    tic
         tmp_itraces = ch2{i}.int_spots_in_frames(1:length(ch2{i}.frames), peaks(peaks(:,5)==i,3:4), r_integrate);
         % add median filtered itraces
         for j=1:length(tmp_itraces)
@@ -451,11 +447,10 @@ for i = 1:N_movie
         % transfer to merged_itraces
         merged_itraces{i,2} = tmp_itraces;
         display(['Tracing ' channel{2} ' channel in movie #' num2str(i) ' done'])
-    toc
     end
 end
 
-%% Determine fitting parameters if cluster pre-processing is deactivated
+%% Determine fitting parameters
 cut = questdlg('Intensity threshold or maximum frame?','Cutoff method','Intensity','Frame','Frame');
 cut = strcmp(cut, 'Frame') + 1;
 fit_cutoff = cell(N_movie,2);
