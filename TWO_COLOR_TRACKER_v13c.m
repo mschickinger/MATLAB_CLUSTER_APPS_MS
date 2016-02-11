@@ -530,7 +530,7 @@ save -v7.3 'movie_objects.mat' 'ch1' 'ch2'
 save 'data_plot.mat' 'channel' 'cut' 'fit_cutoff' 'chb' 'chm'
 
 % for archiving purposes
-save -v7.3 'data_archive.mat' 'avg_img' 'N_frames' 'r_find' 'r_integrate' 'peaks_raw' 'peaks'
+save -v7.3 'data_archive.mat' 'avg_img' 'N_frames' 'r_find' 'r_integrate' 'peaks' 'peaks_raw' 'ch1_fit_raw' 'ch2_fit_raw'
 
 %% start position estimator batch job
 mycluster=parcluster('SharedCluster');
