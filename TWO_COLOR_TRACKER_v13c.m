@@ -215,7 +215,14 @@ close(h)
 
 criteria = ones(N_peaks_raw,2);
 
-std_borders = [0.8 1.25];
+borderline = inputdlg('Enter value for st.dev. ratio cutoff:', 'Width ratio cutoff', [1 38], {'0.9'});
+borderline = str2double(borderline{1});
+
+if borderline <= 1
+    std_borders = [borderline 1/borderline];
+else
+    std_borders = [1/borderline borderline];
+end
 
 switch chb
     case 1
@@ -657,4 +664,4 @@ end
 
 disp('Done plotting.')
 % End of program
-disp('End of program.')                                                                                                                                                                                                                                            
+disp('End of program.')
