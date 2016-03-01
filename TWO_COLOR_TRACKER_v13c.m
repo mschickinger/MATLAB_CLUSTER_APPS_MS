@@ -143,24 +143,11 @@ end
 %% get threshold and find peaks from first N_frames
 
 peaks_raw = zeros(0,5);
-all_positions = cell(N_movie, 2);
-
-if mapping
-pos1on2 = cell(N_movie, 1);
-pos2on1 = cell(N_movie, 1);
-end
 
 for i=1:N_movie 
     [ ~ , pos_ch1] = ch1{i}.get_h_min(r_find, N_frames, avg_img{i,1});
     [ ~ , pos_ch2] = ch2{i}.get_h_min(r_find, N_frames, avg_img{i,2});
-    all_positions{i,1} = pos_ch1;
-    all_positions{i,2} = pos_ch2;
-    
-    if mapping
-        pos1on2{i} = transformPointsInverse(tform_2TO1, pos_ch1(:,1:2));  %%this takes coords in ch1 and transforms them to coords in ch2
-        pos2on1{i} = transformPointsInverse(tform_1TO2, pos_ch2(:,1:2));  %%this takes coords in ch2 and transforms them to coords in ch1
-    end
-    
+
     % map peaks
     trace_map = map_traces(pos_ch1(:,1:2), pos_ch2(:,1:2), pos_ch2(:,1:2), r_find*2)+1; %map the traces from average positions
 
@@ -527,11 +514,7 @@ end
 save -v7.3 'data_spot_pairs.mat' 'data' 'path_out'
 
 % data needed for processing (batch jobs and later)
-if mapping
 save -v7.3 'data_proc.mat' 'pos_in_frame' 'time_per_frame' 'tform' 'mapping'
-else
-save -v7.3 'data_proc.mat' 'pos_in_frame' 'time_per_frame' 'tform' 'mapping'    
-end
 
 % movie objects
 save -v7.3 'movie_objects.mat' 'ch1' 'ch2'
