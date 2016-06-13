@@ -68,19 +68,20 @@ cd(data_path)
 save -v7.3 'vwcm_output.mat' 'vwcm_output'
 
 %% Output structure part
-
+vwcm_secondary = cell(size(data));
 for m = 1:size(data,1)
     tmp = data{m};
+    tmp_s = cell(size(data{m}));
     tmp_vwcm_output = vwcm_output{m};
     parfor s = 1:size(data{m},1)
         for ch = 1:2
             % get data from vwcm estimate
             tmp{s,ch}.vwcm.pos = tmp_vwcm_output{s,ch}(:,1:2);
-            tmp{s,ch}.vwcm.delta = tmp_vwcm_output{s,ch}(:,3);
-            tmp{s,ch}.vwcm.N = tmp_vwcm_output{s,ch}(:,4);
-            tmp{s,ch}.vwcm.pos_max = tmp_vwcm_output{s,ch}(:,5:6);
-            tmp{s,ch}.vwcm.v_max = tmp_vwcm_output{s,ch}(:,7);
-            tmp{s,ch}.vwcm.stDev = tmp_vwcm_output{s,ch}(:,8);
+            tmp_s{s,ch}.vwcm.delta = tmp_vwcm_output{s,ch}(:,3);
+            tmp_s{s,ch}.vwcm.N = tmp_vwcm_output{s,ch}(:,4);
+            tmp_s{s,ch}.vwcm.pos_max = tmp_vwcm_output{s,ch}(:,5:6);
+            tmp_s{s,ch}.vwcm.v_max = tmp_vwcm_output{s,ch}(:,7);
+            tmp_s{s,ch}.vwcm.stDev = tmp_vwcm_output{s,ch}(:,8);
             
             % complete datasets
             tmp{s,ch}.vwcm.means100 = running_avg_2d_nnz(tmp{s,ch}.vwcm.pos,100);
@@ -105,6 +106,7 @@ for m = 1:size(data,1)
         end
     end
     data{m} = tmp;
+    vwcm_secondary{m} = tmp_s;
 end
 
 log_string = 'Data structuring done. Saving data. Time elapsed is ';
@@ -116,6 +118,7 @@ fclose(FID);
 %% Save data
 cd(data_path)
 save -v7.3 'data_spot_pairs.mat' 'data'
+save -v7.3 -append 'data_archive.mat' 'vwcm_secondary'
 display('Data saved')
 end
 
