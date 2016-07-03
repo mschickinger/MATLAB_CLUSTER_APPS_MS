@@ -35,7 +35,7 @@ if size(channel,1) == 1
 elseif size(channel,1) == 2
     input = {'First Frame:', 'Last Frame (-1=all):', ['Sequence ' channel{1} ':'], ['Sequence ' channel{2} ':'],... % sample options
         'Framerate compression factor'};
-    input_default = {'2', '-1', '01', '10','10'};
+    input_default = {'1', '-1', '1', '1','10'};
 elseif size(channel,1) == 3
     input = {'First Frame:', 'Last Frame (-1=all):', ['Sequence ' channel{1} ':'], ['Sequence ' channel{2} ':'],... % sample options
         ['Sequence ' channel{3} ':'], 'Framerate compression factor'};
