@@ -97,7 +97,7 @@ for m = 1:N_movie
         for i = 1:N_skip:N_frames
             tmp = movies{m,ch}.readFrame(movies{m,ch}.frames(i));
             tmp = scalematrix(tmp, 0, 1);
-            tmp3 = zeros(512,512,3);
+            tmp3 = zeros(movies{m,ch}.sizeY,movies{m,ch}.sizeX,3);
             for j = 1:3
             tmp3(:,:,j) = tmp;
             end

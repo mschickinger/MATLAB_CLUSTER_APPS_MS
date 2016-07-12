@@ -277,7 +277,7 @@ if drift_cor
             avg_img_masked(:) = avg_img{m,chb}(:).* ...
                 (img_meanfilt(:)>(mean(nonzeros(img_meanfilt(:)))+std(nonzeros(img_meanfilt(:)))));
             for i = 1:size(drift_by_int{m},1)
-                ai = zeros(512,512);
+                ai = zeros(ch2{m}.sizeY,ch2{m}.sizeX);
                 for j = 1:min([interval length(ch2{m}.frames)-(i-1)*interval])
                     ai = ai + ch2{m}.readFrame(ch2{m}.frames((i-1)*interval+j));
                 end
