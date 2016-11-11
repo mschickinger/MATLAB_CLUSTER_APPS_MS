@@ -116,7 +116,13 @@ else
 end
 
 drift_cor = strcmp(questdlg('Perform drift correction?','Drift correction','Yes','No','Yes'),'Yes');
-ParPrePro = strcmp(questdlg('Pre-process on cluster? (drift, itraces)','Parallel Pre-Processing','Yes','No','Yes'), 'Yes');
+ParPrePro = questdlg('Pre-processing? (drift, itraces)','Pre-Processing','One node','Two nodes','Head node');
+if strcmp(ParPrePro, 'One node')
+    N_workers = 31;
+elseif strcmp(ParPrePro, 'Two nodes')
+    N_workers = 63;
+end
+ParPrePro = ~strcmp(ParPrePro, 'Head node');
 
 %% compute average images
 avg_img = cell(N_movie, 4);
@@ -136,7 +142,7 @@ if drift_cor
         mycluster = parcluster('SharedCluster');
         drift_job = custom_batch('matthiasschickinger', mycluster, @par_drift_ch2, 1 ...
         , {ch2, avg_img(:,2), interval, path_out},'CaptureDiary',true, 'CurrentDirectory', '.' ...
-        , 'Pool', 63, 'AdditionalPaths', {[matlab_dir filesep 'TOOLBOX_MOVIE']});
+        , 'Pool', N_workers, 'AdditionalPaths', {[matlab_dir filesep 'TOOLBOX_MOVIE']});
     end
 end
 
@@ -410,7 +416,7 @@ if ParPrePro
     intstat = 0; % keep track of cluster job
     itrace_job = custom_batch('matthiasschickinger', mycluster, @par_merged_itraces, 1 ...
     , {[ch1 ch2], peaks, r_integrate, path_out},'CaptureDiary',true, 'CurrentDirectory', '.' ...
-    , 'Pool', 63,'AdditionalPaths', {[matlab_dir filesep 'TOOLBOX_GENERAL'], [matlab_dir filesep 'TOOLBOX_MOVIE'],...
+    , 'Pool', N_workers,'AdditionalPaths', {[matlab_dir filesep 'TOOLBOX_GENERAL'], [matlab_dir filesep 'TOOLBOX_MOVIE'],...
     [matlab_dir filesep 'FM_applications'], [matlab_dir filesep 'DEVELOPMENT']});
     tic
     while intstat == 0
@@ -528,14 +534,16 @@ save -v7.3 'data_archive.mat' 'avg_img' 'N_frames' 'r_find' 'r_integrate' 'peaks
 %% start position estimator batch job
 mycluster=parcluster('SharedCluster');
 ask_pos = questdlg('Perform vwcm AND gF estimation?', 'To gauss or not to gauss?', 'yes, both', 'no, vwcm only', 'yes, both');
+N_workers = questdlg('Choose number of workers for this job', 'N_workers', '63', '31', '63');
+N_workers = str2double(N_workers);
 if strcmp(ask_pos, 'yes, both') 
     pos_job = custom_batch('matthiasschickinger', mycluster, @par_pos_v1, 1, {path_out} ...
-    ,'CaptureDiary',true, 'CurrentDirectory', '.', 'Pool', 63 ...
+    ,'CaptureDiary',true, 'CurrentDirectory', '.', 'Pool', N_workers ...
     ,'AdditionalPaths', {[matlab_dir filesep 'TOOLBOX_GENERAL'], [matlab_dir filesep 'TOOLBOX_MOVIE'],...
     [matlab_dir filesep 'FM_applications'], [matlab_dir filesep 'FM_applications' filesep 'CLUSTER_APPLICATIONS'], [matlab_dir filesep 'DEVELOPMENT']});
 elseif strcmp(ask_pos, 'no, vwcm only')
     pos_job = custom_batch('matthiasschickinger', mycluster, @par_vwcm, 1, {path_out} ...
-    ,'CaptureDiary',true, 'CurrentDirectory', '.', 'Pool', 63 ...
+    ,'CaptureDiary',true, 'CurrentDirectory', '.', 'Pool', N_workers ...
     ,'AdditionalPaths', {[matlab_dir filesep 'TOOLBOX_GENERAL'], [matlab_dir filesep 'TOOLBOX_MOVIE'],...
     [matlab_dir filesep 'FM_applications' filesep 'CLUSTER_APPLICATIONS'], [matlab_dir filesep 'DEVELOPMENT']});
 end
