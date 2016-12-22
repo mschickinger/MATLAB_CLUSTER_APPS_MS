@@ -116,7 +116,7 @@ else
 end
 
 drift_cor = strcmp(questdlg('Perform drift correction?','Drift correction','Yes','No','Yes'),'Yes');
-ParPrePro = questdlg('Pre-processing? (drift, itraces)','Pre-Processing','One node','Two nodes','Head node');
+ParPrePro = questdlg('Pre-processing? (drift, itraces)','Pre-Processing','One node','Two nodes', 'Head node', 'Head node');
 if strcmp(ParPrePro, 'One node')
     N_workers = 31;
 elseif strcmp(ParPrePro, 'Two nodes')
@@ -208,8 +208,9 @@ close(h)
 
 criteria = ones(N_peaks_raw,2);
 
-borderline = inputdlg('Enter value for st.dev. ratio cutoff:', 'Width ratio cutoff', [1 38], {'0.9'});
-borderline = str2double(borderline{1});
+%borderline = inputdlg('Enter value for st.dev. ratio cutoff:', 'Width ratio cutoff', [1 38], {'0.9'});
+%borderline = str2double(borderline{1});
+borderline = 0.8;
 
 if borderline <= 1
     std_borders = [borderline 1/borderline];
