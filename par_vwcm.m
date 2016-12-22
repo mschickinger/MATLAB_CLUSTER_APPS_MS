@@ -85,7 +85,7 @@ for m = 1:size(data,1)
             
             % complete datasets
             tmp{s,ch}.vwcm.means100 = running_avg_2d_nnz(tmp{s,ch}.vwcm.pos,100);
-            tmp{s,ch}.vwcm.medians101 = medfilt1_trunc(tmp{s,ch}.vwcm.pos,101);
+            tmp{s,ch}.vwcm.medians101 = medfilt1_trunc_2d(tmp{s,ch}.vwcm.pos,101);
 
             tmp{s,ch}.vwcm.disp100 = tmp{s,ch}.vwcm.pos - tmp{s,ch}.vwcm.means100;
             tmp{s,ch}.vwcm.dispmed101 = tmp{s,ch}.vwcm.pos - tmp{s,ch}.vwcm.medians101;
