@@ -438,7 +438,7 @@ else
         tmp_itraces = ch1{i}.int_spots_in_frames(1:length(ch1{i}.frames), peaks(peaks(:,5)==i,1:2), r_integrate);
         % add median filtered itraces
         for j=1:length(tmp_itraces)
-            tmp_itraces{j} = [tmp_itraces{j} medfilt1(tmp_itraces{j}(:,4),20)];
+            tmp_itraces{j} = [tmp_itraces{j} medfilt1_trunc(tmp_itraces{j}(:,4),20)];
         end
         % transfer to merged_itraces
         merged_itraces{i,1} = tmp_itraces;
@@ -446,7 +446,7 @@ else
         tmp_itraces = ch2{i}.int_spots_in_frames(1:length(ch2{i}.frames), peaks(peaks(:,5)==i,3:4), r_integrate);
         % add median filtered itraces
         for j=1:length(tmp_itraces)
-            tmp_itraces{j} = [tmp_itraces{j} medfilt1(tmp_itraces{j}(:,4),20)];
+            tmp_itraces{j} = [tmp_itraces{j} medfilt1_trunc(tmp_itraces{j}(:,4),20)];
         end
         % transfer to merged_itraces
         merged_itraces{i,2} = tmp_itraces;
